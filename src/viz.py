@@ -30,9 +30,10 @@ _CN_FONT_CANDIDATES = (
     "Arial Unicode MS",
 )
 
-PALETTE_PRIMARY = ["#3B82F6", "#EF4444", "#10B981", "#F59E0B", "#8B5CF6", "#EC4899"]
-PALETTE_DIVERGE = ["#1E40AF", "#3B82F6", "#93C5FD", "#FDE68A", "#FB923C", "#DC2626"]
-PALETTE_SEQ = ["#EFF6FF", "#BFDBFE", "#60A5FA", "#2563EB", "#1E3A8A"]
+PALETTE_PRIMARY = ["#4C72B0", "#DD8452", "#55A868", "#C44E52", "#8172B3", "#CCB974"]
+PALETTE_DIVERGE = ["#3A5FCD", "#6CA6CD", "#B4CDE4", "#FCDCA3", "#F08C5D", "#B22222"]
+PALETTE_SEQ = ["#F2F6FA", "#CADCEC", "#8FB3D9", "#4F7BB8", "#274C8F"]
+PALETTE_SCI = ["#0C5DA5", "#E34A33", "#00B945", "#FF9500", "#845B97", "#474747"]
 
 
 def _find_chinese_font() -> str | None:
@@ -66,7 +67,7 @@ def apply_style() -> str | None:
     if _STYLE_APPLIED:
         return _CN_FONT_NAME
 
-    sns.set_theme(style="whitegrid", context="notebook")
+    sns.set_theme(style="ticks", context="paper")
     cn_font = _find_chinese_font()
     _CN_FONT_NAME = cn_font
 
@@ -77,29 +78,40 @@ def apply_style() -> str | None:
         "font.family": "sans-serif",
         "font.sans-serif": family_list,
         "axes.unicode_minus": False,
-        "figure.dpi": 110,
-        "savefig.dpi": 160,
+        "figure.dpi": 120,
+        "savefig.dpi": 300,
         "savefig.bbox": "tight",
-        "axes.titlesize": 14,
-        "axes.titleweight": "bold",
-        "axes.labelsize": 11,
+        "axes.titlesize": 16,
+        "axes.titleweight": "600",
+        "axes.labelsize": 13,
         "axes.spines.top": False,
         "axes.spines.right": False,
-        "axes.edgecolor": "#374151",
-        "axes.labelcolor": "#1F2937",
-        "xtick.color": "#4B5563",
-        "ytick.color": "#4B5563",
-        "grid.color": "#E5E7EB",
-        "grid.linewidth": 0.6,
+        "axes.linewidth": 1.2,
+        "axes.edgecolor": "#2D3748",
+        "axes.labelcolor": "#1A202C",
+        "xtick.color": "#2D3748",
+        "ytick.color": "#2D3748",
+        "xtick.labelsize": 11,
+        "ytick.labelsize": 11,
+        "grid.color": "#E2E8F0",
+        "grid.linewidth": 0.8,
+        "grid.alpha": 0.6,
         "legend.frameon": False,
+        "legend.fontsize": 11,
         "figure.facecolor": "white",
+        "axes.facecolor": "#FAFAFA",
     })
     _STYLE_APPLIED = True
     return cn_font
 
 
 def palette(n: int = 6, kind: str = "primary") -> list[str]:
-    base = {"primary": PALETTE_PRIMARY, "diverge": PALETTE_DIVERGE, "seq": PALETTE_SEQ}[kind]
+    base = {
+        "primary": PALETTE_PRIMARY,
+        "diverge": PALETTE_DIVERGE,
+        "seq": PALETTE_SEQ,
+        "sci": PALETTE_SCI,
+    }[kind]
     if n <= len(base):
         return base[:n]
     cmap = sns.color_palette("husl", n)
@@ -109,7 +121,7 @@ def palette(n: int = 6, kind: str = "primary") -> list[str]:
 def save_fig(fig: plt.Figure, name: str, out_dir: Path) -> Path:
     out_dir.mkdir(parents=True, exist_ok=True)
     path = out_dir / f"{name}.png"
-    fig.savefig(path, dpi=160, bbox_inches="tight", facecolor="white")
+    fig.savefig(path, dpi=300, bbox_inches="tight", facecolor="white", edgecolor="none")
     plt.close(fig)
     return path
 
