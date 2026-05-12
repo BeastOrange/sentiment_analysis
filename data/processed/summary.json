@@ -1,0 +1,14 @@
+{
+  "binary": {
+    "train": 20000,
+    "val": 2500,
+    "test": 2500,
+    "vocab_size": 22407
+  },
+  "emotion": {
+    "train": 10368,
+    "val": 1500,
+    "test": 1500,
+    "vocab_size": 10216
+  }
+}

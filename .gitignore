@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+.uv-cache/
+.idea/
+.vscode/
+
+# 模型权重过大（BERT 单文件 ~390MB 超过 GitHub 限制），可通过 run_all.py 复现
+outputs/models/
+*.pt
+*.bin
+*.safetensors
+
+# HuggingFace 缓存（大量小文件）
+data/raw/.cache/

@@ -1,0 +1,76 @@
+warning: `VIRTUAL_ENV=/opt/homebrew/opt/python@3.14/Frameworks/Python.framework/Versions/3.14` does not match the project environment path `.venv` and will be ignored; use `--active` to target the active environment instead
+[05/12/26 14:02:30] INFO     设备：mps                                          
+[05/12/26 14:02:31] INFO     BERT 子采样训练集：8000（验证 2500 / 测试 2500）   
+[05/12/26 14:02:31] INFO     ⏱  开始：加载预训练模型 bert-base-chinese          
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]Loading weights: 100%|██████████| 199/199 [00:00<00:00, 8284.45it/s]
+[transformers] [1mBertForSequenceClassification LOAD REPORT[0m from: bert-base-chinese
+Key                                        | Status     | 
+-------------------------------------------+------------+-
+cls.seq_relationship.bias                  | UNEXPECTED | 
+cls.seq_relationship.weight                | UNEXPECTED | 
+cls.predictions.bias                       | UNEXPECTED | 
+cls.predictions.transform.dense.weight     | UNEXPECTED | 
+cls.predictions.transform.LayerNorm.bias   | UNEXPECTED | 
+cls.predictions.transform.dense.bias       | UNEXPECTED | 
+cls.predictions.transform.LayerNorm.weight | UNEXPECTED | 
+classifier.weight                          | MISSING    | 
+classifier.bias                            | MISSING    | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+[05/12/26 14:02:34] INFO     ✓  完成：加载预训练模型 bert-base-chinese（用时    
+                             3.4s）                                             
+[05/12/26 14:02:34] INFO     参数量：102.3M                                     
+[05/12/26 14:02:52] INFO     [BERT] Epoch 1/2 step 25/250 | loss 0.6525 acc     
+                             0.632                                              
+[05/12/26 14:03:11] INFO     [BERT] Epoch 1/2 step 50/250 | loss 0.5232 acc     
+                             0.754                                              
+[05/12/26 14:03:29] INFO     [BERT] Epoch 1/2 step 75/250 | loss 0.4096 acc     
+                             0.817                                              
+[05/12/26 14:03:47] INFO     [BERT] Epoch 1/2 step 100/250 | loss 0.3427 acc    
+                             0.849                                              
+[05/12/26 14:04:05] INFO     [BERT] Epoch 1/2 step 125/250 | loss 0.2999 acc    
+                             0.871                                              
+[05/12/26 14:04:22] INFO     [BERT] Epoch 1/2 step 150/250 | loss 0.2701 acc    
+                             0.886                                              
+[05/12/26 14:04:41] INFO     [BERT] Epoch 1/2 step 175/250 | loss 0.2465 acc    
+                             0.898                                              
+[05/12/26 14:04:59] INFO     [BERT] Epoch 1/2 step 200/250 | loss 0.2335 acc    
+                             0.905                                              
+[05/12/26 14:05:18] INFO     [BERT] Epoch 1/2 step 225/250 | loss 0.2183 acc    
+                             0.912                                              
+[05/12/26 14:05:37] INFO     [BERT] Epoch 1/2 step 250/250 | loss 0.2109 acc    
+                             0.916                                              
+[05/12/26 14:05:53] INFO     [BERT] Ep01 | 训练 loss 0.2109 acc 0.916 | 验证    
+                             loss 0.1050 acc 0.968 f1 0.968 auc 0.992 | 用时    
+                             199.3s                                             
+[05/12/26 14:06:13] INFO     [BERT] Epoch 2/2 step 25/250 | loss 0.0813 acc     
+                             0.973                                              
+[05/12/26 14:06:31] INFO     [BERT] Epoch 2/2 step 50/250 | loss 0.0832 acc     
+                             0.975                                              
+[05/12/26 14:06:51] INFO     [BERT] Epoch 2/2 step 75/250 | loss 0.0818 acc     
+                             0.975                                              
+[05/12/26 14:07:09] INFO     [BERT] Epoch 2/2 step 100/250 | loss 0.0882 acc    
+                             0.974                                              
+[05/12/26 14:07:29] INFO     [BERT] Epoch 2/2 step 125/250 | loss 0.0839 acc    
+                             0.975                                              
+[05/12/26 14:07:49] INFO     [BERT] Epoch 2/2 step 150/250 | loss 0.0832 acc    
+                             0.975                                              
+[05/12/26 14:08:07] INFO     [BERT] Epoch 2/2 step 175/250 | loss 0.0823 acc    
+                             0.974                                              
+[05/12/26 14:08:26] INFO     [BERT] Epoch 2/2 step 200/250 | loss 0.0819 acc    
+                             0.974                                              
+[05/12/26 14:08:45] INFO     [BERT] Epoch 2/2 step 225/250 | loss 0.0826 acc    
+                             0.974                                              
+[05/12/26 14:09:02] INFO     [BERT] Epoch 2/2 step 250/250 | loss 0.0817 acc    
+                             0.974                                              
+[05/12/26 14:09:17] INFO     [BERT] Ep02 | 训练 loss 0.0817 acc 0.974 | 验证    
+                             loss 0.1128 acc 0.965 f1 0.966 auc 0.994 | 用时    
+                             202.8s                                             
+[05/12/26 14:09:33] INFO     测试集：{'accuracy': 0.9668, 'precision':          
+                             0.959087332808812, 'recall': 0.9752, 'f1':         
+                             0.9670765569218565, 'auc': 0.9902112000000001,     
+                             'loss': 0.11283637601137161}                       
+[05/12/26 14:09:34] INFO     ✓ BERT 完成                                        
