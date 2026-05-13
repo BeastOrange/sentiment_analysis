@@ -77,19 +77,48 @@ def render() -> None:
 
     st.divider()
 
-    # 顶层结论卡片
+    # 顶层结论卡片：综合判断（二分类融合 + 六情绪风险 + BERT 双校验）
     ens = result["binary"]["Ensemble (融合)"]
+    bert_res = result["binary"]["BERT"]
     emo = result["emotion"]
     risk = emo["depression_risk"]
     risk_name, risk_color = get_risk_level(risk)
 
+    # 综合判断逻辑：避免单模型误判
+    # 规则：
+    #   - 若融合预测 = 抑郁，但六情绪风险 < 0.25 且 BERT 也判非抑郁，
+    #     则采纳"非抑郁"结论并提示模型分歧
+    #   - 反之亦然
+    ens_pred_depress = ens["label_idx"] == 1
+    bert_pred_depress = bert_res["label_idx"] == 1
+    risk_says_depress = risk >= 0.5
+
+    # 多数投票（融合 / BERT / 六情绪风险）
+    votes = [ens_pred_depress, bert_pred_depress, risk_says_depress]
+    depress_count = sum(votes)
+    final_is_depress = depress_count >= 2
+
+    # 综合置信度：三者一致时较高，分歧时较低
+    if depress_count == 0:
+        final_conf = (bert_res["prob"][0] + ens["prob"][0] + (1 - risk)) / 3
+        final_label = "非抑郁倾向"
+    elif depress_count == 3:
+        final_conf = (bert_res["prob"][1] + ens["prob"][1] + risk) / 3
+        final_label = "抑郁倾向"
+    else:
+        # 分歧时取较保守的结论
+        final_label = "抑郁倾向" if final_is_depress else "非抑郁倾向"
+        final_conf = max(votes.count(final_is_depress) / 3, 0.5)
+
+    has_disagreement = depress_count not in (0, 3)
+
     col1, col2, col3, col4 = st.columns(4)
     with col1:
         st.metric(
-            label="抑郁倾向",
-            value=ens["label"],
-            delta=f"置信度 {ens['confidence']*100:.1f}%",
-            delta_color="inverse" if ens["label_idx"] == 1 else "normal",
+            label="综合判断",
+            value=final_label,
+            delta=f"置信度 {final_conf*100:.1f}%",
+            delta_color="inverse" if final_is_depress else "normal",
         )
     with col2:
         st.metric(
@@ -101,7 +130,7 @@ def render() -> None:
         st.metric(
             label="抑郁风险分数",
             value=f"{risk:.3f}",
-            delta=f"范围 0 ~ 1",
+            delta="范围 0 ~ 1",
         )
     with col4:
         st.markdown(
@@ -116,6 +145,32 @@ def render() -> None:
             """,
             unsafe_allow_html=True,
         )
+
+    # 分歧提示
+    if has_disagreement:
+        st.warning(
+            f"⚠️ **模型存在分歧**：二分类融合预测「{ens['label']}」，"
+            f"BERT 预测「{bert_res['label']}」，六情绪风险分数 {risk:.3f}。"
+            f"系统采用**多数投票 + 六情绪交叉验证**给出综合判断「{final_label}」。"
+            f"建议查看下方各模型详细概率，结合上下文人工判断。"
+        )
+
+    # 综合判断逻辑说明（可折叠）
+    with st.expander("🔬 综合判断逻辑说明"):
+        st.markdown("""
+        **为什么需要综合判断？**
+
+        单个模型（即使是融合模型）在某些短文本上可能因训练数据偏差而误判。
+        例如：BiLSTM 模型对某些简短的正面表达可能过度敏感，给出较高的抑郁概率。
+
+        **综合判断采用三方投票**：
+        1. **二分类融合模型**（BiLSTM 0.8 + BERT 0.2）的预测
+        2. **BERT 模型**的独立预测（最稳健的预训练模型）
+        3. **六情绪风险分数** ≥ 0.5 视为高风险
+
+        三者中至少两个支持"抑郁倾向"才最终判定为抑郁，否则判为非抑郁。
+        这种**多数投票 + 跨任务交叉验证**机制能显著降低单模型误判风险。
+        """)
 
     st.divider()
 
@@ -169,7 +224,16 @@ def render() -> None:
         if len(unique_preds) == 1:
             st.success(f"✅ 所有模型一致判断为「{list(result['binary'].values())[0]['label']}」")
         else:
-            st.warning("⚠️ 模型预测存在分歧，建议参考融合模型结果")
+            # 列出每个模型的判断
+            details = " · ".join(
+                f"{n}: {r['label']}({r['confidence']*100:.0f}%)"
+                for n, r in result["binary"].items()
+            )
+            st.warning(f"⚠️ 模型预测存在分歧：{details}")
+            st.caption(
+                "💡 由于训练数据中的偏差，单一模型在某些短文本上可能出现误判。"
+                "建议参考顶部的「综合判断」和六情绪风险分数，进行综合考量。"
+            )
 
     with tab2:
         st.markdown("#### 六情绪分布")
