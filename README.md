@@ -30,6 +30,29 @@ uv run python scripts/08_emotion_analysis.py
 uv run python scripts/run_all.py
 ```
 
+## Web 界面（Streamlit）
+
+模型训练完成后，启动可视化推理界面：
+
+```bash
+uv run streamlit run app.py
+```
+
+浏览器打开 `http://localhost:8501`，界面提供四个功能：
+
+| 页面 | 功能 |
+| --- | --- |
+| 📝 单文本分析 | 输入一段文本，输出抑郁倾向 + 六情绪 + 风险分数 |
+| 📂 批量文件分析 | 上传 CSV / Excel / TXT 批量分析并下载结果 |
+| ⚖️ 模型对比 | 对比 TextCNN / BiLSTM / BERT / Ensemble 在同一文本上的差异 |
+| ℹ️ 关于项目 | 数据集、模型、性能、风险等级、心理援助热线 |
+
+**批量文件格式要求**：
+
+- **CSV (.csv)**：UTF-8 编码，第一列或名为 `text` / `content` / `评论` / `内容` 的列作为文本输入
+- **Excel (.xlsx/.xls)**：第一个工作表，列名规则同 CSV
+- **纯文本 (.txt)**：UTF-8 编码，每行一条文本
+
 ## 项目结构
 
 ```text
